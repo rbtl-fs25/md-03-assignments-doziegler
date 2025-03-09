@@ -31,7 +31,7 @@ All exercises in this assignment use the `penguins` data as a starting point.
 
 5.  What data types are contained in the variables? (Reminder: [https://rbtl-fs24.github.io/website/slides/lec-02-visualisation.html#/types-of-variables](https://ds4owd-001.github.io/website/slides/lec-02-visualisation.html#/types-of-variables){.uri})\
     \
-    8 variables, 344 observations, \
+    8 variables, 344 observations,\
     Variables:
 
     non numeric, categorical: species, island, sex\
