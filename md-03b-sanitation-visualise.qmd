@@ -1,10 +1,10 @@
 ---
 title: "Data transformation with dplyr"
 subtitle: "And make a plot"
-author: ""
-format:
-  html:
-    embed-resources: true
+author: "Dominic Ziegler"
+format: "html"
+html:
+embed-resources: true
 editor: visual
 execute:
   warning: false
@@ -47,7 +47,8 @@ sanitation <- read_csv("data/jmp_wld_sanitation_long.csv")
 3.  How many variables are in the data set?
 
 ```{r}
-
+glimpse(sanitation)
+# there are 8 variables in the ds
 ```
 
 ## Task 2
@@ -55,7 +56,7 @@ sanitation <- read_csv("data/jmp_wld_sanitation_long.csv")
 1.  Use the `count()` function with varname_short and varname_long to identify the definitions of the levels in these two variables.
 
 ```{r}
-
+sanitation %>% count(varname_short,varname_long)
 ```
 
 ## Task 3
@@ -69,7 +70,16 @@ sanitation <- read_csv("data/jmp_wld_sanitation_long.csv")
 2.  Store the result as a new object in your environment with a name of your choice.
 
 ```{r}
-
+sanitation_filt <- sanitation %>%
+  filter(name == "Benin",
+         year %in% c(2000,2020),
+         varname_short != "san_sm"
+         )
+sanitation_filt_1 <- sanitation %>%
+  filter(name == "Benin",
+         year %in% c(2000,2020)
+         )
+# I don't quite understand the difference between year == c(2000,2020) and year %in% c(2000,2020)
 ```
 
 ## Task 4
@@ -77,7 +87,7 @@ sanitation <- read_csv("data/jmp_wld_sanitation_long.csv")
 1.  Use the `count()` function with the data you created in Task 3 to verify that year 2000 and 2020 remained in the year variable.
 
 ```{r}
-
+sanitation_filt %>% count(year)
 ```
 
 ## Task 5
@@ -100,7 +110,17 @@ geom_text(aes(label = round(percent, 1)),
 ```
 
 ```{r}
-
+ggplot(data = sanitation_filt,
+       mapping = aes(x = residence,
+                     y = percent,
+                     fill = varname_long)) +
+  geom_col() +
+  facet_wrap(vars(year))+
+  scale_fill_colorblind() +
+  geom_text(aes(label = round(percent, 1)), 
+          position = position_stack(vjust = 0.5),
+          size = 3,
+          color = "white") 
 ```
 
 ## Task 6
@@ -108,13 +128,28 @@ geom_text(aes(label = round(percent, 1)),
 If you haven't worked with JMP indicators before, the following questions will be challenging to answer.
 
 1.  Look at the plot that you created. What do you notice about the order of the bars / order of the legend?
+
 2.  What would you want to change?
+
 3.  Why did we remove "safely managed sanitation services" from the data set in Task 3?
+
+    Answers:
+
+<!-- -->
+
+1.  the legend is a bit confusing as no sanitation facilities is not on the bottom
+2.  I would change the order from bottom to top: No, Unimproved, Limited, Basic Sanitation services
+3.  It seems like in this category there are only NA values, also the percentages of the other categories seem to already add up to 100 %, so i don't quite understand this category
 
 ## Task 7
 
 1.  Run the code in the code chunk below.
+
 2.  What do you observe when you look at the code and plot?
+
+    Answer:
+
+    this plot shows the sanitation data over all countries of the world, with the the count of countries on the y axis and the percentage in the x axis. the plot is divided into the categories residence and types of sanitation available. The y axis is free which allows for an individual scaling of the y axis depending on the data range
 
 ```{r}
 
@@ -124,7 +159,7 @@ sanitation_2020 <- sanitation |>
 ggplot(data = sanitation_2020,
        mapping = aes(x = percent, fill = varname_short)) +
   geom_histogram() +
-  facet_grid(varname_short ~ residence, scales = "free_y") +
+  facet_grid(varname_short ~ residence,scales = "free_y" ) +
   scale_fill_colorblind() +
   theme(legend.position = "none") 
 
